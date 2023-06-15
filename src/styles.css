@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+.list-container {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+
+  /* font-family: 'VT323', monospace; */
+  font-family: 'Press Start 2P', cursive;
+}
+
+.list {
+  width: 30vw;
+  height: 80vh;
+  background-color: beige;
+}
