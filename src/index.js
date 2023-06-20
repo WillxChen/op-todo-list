@@ -26,14 +26,6 @@ UI.init();
 //   // Create list
 
 //   // Pass in array of elements to be rendered in the list container
-//   const render = (listArray) => {
-//     listArray.forEach((list) => {});
-//   };
-
-//   render(listStorage);
-// })();
-
-const TaskCreator = (() => {})();
 
 /* Now I want to link it to the UI
   Form Input to create a new List

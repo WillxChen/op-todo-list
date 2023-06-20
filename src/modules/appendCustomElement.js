@@ -1,10 +1,6 @@
-export default function appendCustomElement(
-  target,
-  tagName,
-  classList,
-  textContent,
-  attributes
-) {
+export default function appendCustomElement(options) {
+  const { target, tagName, classList, textContent, attributes } = options;
+
   const targetElement = document.querySelector(target);
   const element = document.createElement(tagName);
   if (typeof classList === "string") {
