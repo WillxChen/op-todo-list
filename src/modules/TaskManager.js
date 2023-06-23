@@ -1,15 +1,13 @@
-/* 
-  Each List will have a button that expands a Task input field
-  Tasks will then be pushed to the List Task array
-  CRUD
-*/
-
-const TaskManager = () => {
-  const getTaskById = (taskList, taskId) => {
+const TaskManager = (taskList) => {
+  const getTaskById = (taskId) => {
     return taskList.find((task) => task.id === taskId);
   };
 
-  const createTask = (taskList, title) => {
+  const getTaskByIndex = (taskId) => {
+    return taskList.findIndex((task) => task.id === taskId);
+  };
+
+  const createTask = (title) => {
     taskList.push({
       id: crypto.randomUUID().slice(0, 8),
       title,
@@ -17,12 +15,17 @@ const TaskManager = () => {
     return taskList[taskList.length - 1];
   };
 
-  const updateTask = (taskList, taskId, updatedEntry) => {
-    const taskIndex = taskList.findIndex((task) => task.id === taskId);
+  const updateTask = (taskId, updatedEntry) => {
+    const taskIndex = getTaskByIndex(taskId);
     taskList[taskIndex] = { ...taskList[taskIndex], ...updatedEntry };
   };
 
-  return { getTaskById, createTask, updateTask };
+  const removeTask = (taskId) => {
+    const taskIndex = getTaskByIndex(taskId);
+    taskList.splice(taskIndex, 1);
+  };
+
+  return { getTaskById, createTask, updateTask, removeTask };
 };
 
 export default TaskManager;

@@ -1,27 +1,9 @@
 import TaskManager from "./modules/TaskManager.js";
-import UiManager from "./modules/UIHandler.js";
+import UserInterface from "./modules/UserInterface.js";
 import Project from "./modules/Project.js";
 
-const currentProject = Project();
-const listStorage = currentProject.getLists();
-
-const UI = UiManager;
+const UI = UserInterface;
 UI.init();
-
-// const ListUpdater = (() => {
-//   const lists = document.querySelector(".lists");
-
-//   const update = () => {
-//     lists.innerHTML = "";
-//     listStorage.forEach((list) => {
-//       lists.innerHTML += `<li>${list.getTitle()}</li>`;
-//     });
-//   };
-//   return { update };
-// })();
-
-// const ListRenderer = (() => {
-//   const listContainer = document.querySelector(".list-container");
 
 //   // Create list
 

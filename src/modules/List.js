@@ -1,31 +1,38 @@
 import TaskManager from "./TaskManager";
 
-const List = (title, id) => {
-  const tasks = [
-    { title: 1234, id: 1 },
-    { title: 45687, id: 2 },
-  ];
-  const taskManager = TaskManager();
+const List = (title, id = crypto.randomUUID().slice(0, 8)) => {
+  const tasks = [];
+  const taskManager = TaskManager(tasks);
 
   const getTitle = () => title;
   const getId = () => id;
   const getTasks = () => tasks;
 
-  const getTaskById = (taskId) => {
-    return taskManager.getTaskById(tasks, taskId);
+  const createTask = (title) => {
+    return taskManager.createTask(title);
   };
 
-  const createTask = (title) => {
-    return taskManager.createTask(tasks, title);
+  const getTaskById = (taskId) => {
+    return taskManager.getTaskById(taskId);
   };
 
   const updateTask = (taskId, updatedEntry) => {
-    return taskManager.updateTask(tasks, taskId, updatedEntry);
+    return taskManager.updateTask(taskId, updatedEntry);
   };
 
-  const removeTask = () => {};
+  const removeTask = (taskId) => {
+    return taskManager.removeTask(taskId);
+  };
 
-  return { getTitle, getId, getTasks, createTask, updateTask, getTaskById };
+  return {
+    getTitle,
+    getId,
+    getTasks,
+    createTask,
+    getTaskById,
+    updateTask,
+    removeTask,
+  };
 };
 
 export default List;

@@ -1,6 +1,9 @@
+import { editTask, toggleDetails } from "./EventHandler.js";
+import { createCustomElement } from "./customElementHelper.js";
+
 const TaskRenderer = () => {
   const renderTaskElements = (target, tasks) => {
-    target.append(...tasks);
+    target.prepend(...tasks);
   };
 
   const createTaskElements = (tasks, currentList) => {
@@ -16,43 +19,69 @@ const TaskRenderer = () => {
       div.appendChild(p);
 
       // Add onclick to change element to input on click
-      div.addEventListener("click", (e) => {
+      div.addEventListener("dblclick", (e) => {
         editTask(e, task.id, currentList);
+      });
+
+      div.addEventListener("click", (e) => {
+        toggleDetails(e, task);
       });
 
       return div;
     });
   };
 
-  const editTask = (e, taskId, currentList) => {
-    const el = e.target;
-    const previous = el.cloneNode(true);
-    const input = document.createElement("input");
-
-    const currentTask = currentList.getTaskById(taskId);
-    input.value = currentTask.title;
-    el.replaceWith(input);
-
-    const save = () => {
-      // Save the input value into the selected task
-      currentList.updateTask(taskId, { title: input.value });
-      previous.textContent = input.value;
-      input.replaceWith(previous);
-    };
-
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        input.blur();
-      }
-    });
-
-    input.addEventListener("blur", save, {
-      once: true,
-    });
-    input.focus();
+  const renderExpandedTask = (target, task) => {
+    const expandedTask = __createExpandedTask(task);
+    target.append(expandedTask);
+    return expandedTask;
   };
 
-  return { createTaskElements, renderTaskElements };
+  const __createExpandedTask = (task) => {
+    const { description, dueDate, difficulty } = task;
+
+    const fragment = document.createDocumentFragment();
+    // Append children to fragment
+    const expandedDiv = document.createElement("div");
+    // Set toggle attribute to work with toggle event listener
+    expandedDiv.classList.add("expanded-details");
+    fragment.append(expandedDiv);
+
+    // description &&
+    expandedDiv.append(
+      createCustomElement({
+        target: expandedDiv,
+        tagName: "p",
+        classList: "description",
+        textContent: "description",
+      })
+    );
+
+    // dueDate &&
+    expandedDiv.append(
+      createCustomElement({
+        target: expandedDiv,
+        tagName: "p",
+        classList: "due-date",
+        textContent: "dueDate",
+      })
+    );
+
+    // difficulty &&
+    expandedDiv.append(
+      createCustomElement({
+        target: expandedDiv,
+        tagName: "p",
+        classList: "difficulty",
+        textContent: "difficulty",
+      })
+    );
+
+    return fragment;
+  };
+
+  return { createTaskElements, renderTaskElements, renderExpandedTask };
 };
 
-export const { createTaskElements, renderTaskElements } = TaskRenderer();
+export const { createTaskElements, renderTaskElements, renderExpandedTask } =
+  TaskRenderer();

@@ -8,8 +8,20 @@
   font-family: 'Press Start 2P', cursive;
 }
 
+/* input {
+  all: unset;
+} */
+
 .list {
   width: 30vw;
   height: 80vh;
   background-color: beige;
+}
+
+.task {
+  padding: 20px;
+}
+
+.task p:first-child {
+  font-size: 1.2rem;
 }
