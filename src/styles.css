@@ -1,4 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+* {
+  box-sizing: border-box;
+}
+
 .list-container {
   display: flex;
   flex: 1;
@@ -8,20 +12,99 @@
   font-family: 'Press Start 2P', cursive;
 }
 
-/* input {
+input {
   all: unset;
-} */
+}
 
 .list {
   width: 30vw;
   height: 80vh;
   background-color: beige;
+  padding: 15px;
 }
 
 .task {
+  position: relative;
   padding: 20px;
+  border: 1px solid black;
 }
 
-.task p:first-child {
-  font-size: 1.2rem;
+.task p {
+  margin: 1rem 0;
+  word-break: break-word;
+}
+
+.task-input {
+  width: 100%;
+}
+
+/* .isPriority {
+  background-color: wheat;
+} */
+
+.task > p:first-child {
+  font-size: 1.15rem;
+  user-select: none;
+}
+
+.expanded-details {
+  font-size: 1rem;
+}
+
+textarea {
+  all: unset;
+  font-size: 1.15rem;
+  width: 100%;
+  padding-top: 1px;
+  margin-top: calc(1rem - 1px);
+  border-bottom: 1px solid black;
+}
+
+button {
+  background: none;
+  border: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  align-items: center;
+  padding: 0;
+}
+
+button img {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px 6px;
+  width: 100%;
+  height: 100%;
+}
+
+button:hover {
+    -webkit-filter: brightness(.5);
+    filter: brightness(.5);
+}
+
+.filter-red {
+  filter: invert(43%) sepia(27%) saturate(7280%) hue-rotate(336deg) brightness(98%) contrast(94%);
+}
+
+.filter-gray {
+  /* filter: invert(42%) sepia(2%) saturate(3398%) hue-rotate(167deg) brightness(102%) contrast(69%); */
+  filter: invert(82%) sepia(9%) saturate(127%) hue-rotate(194deg) brightness(90%) contrast(88%);
+}
+
+.filter-yellow {
+  filter: invert(78%) sepia(94%) saturate(579%) hue-rotate(317deg) brightness(114%) contrast(101%);
+  stroke-width: 1px;
+}
+
+.toolbar {
+  display: flex;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  top: 5px;
+  right: 5px;
+  user-select: none;
 }

@@ -1,5 +1,9 @@
 import { editTask, toggleDetails } from "./EventHandler.js";
-import { createCustomElement } from "./customElementHelper.js";
+import {
+  createCustomElement,
+  appendCustomElement,
+} from "./customElementHelper.js";
+import Toolbar from "./Toolbar.js";
 
 const TaskRenderer = () => {
   const renderTaskElements = (target, tasks) => {
@@ -9,25 +13,31 @@ const TaskRenderer = () => {
   const createTaskElements = (tasks, currentList) => {
     return tasks.map((task) => {
       // Div container
-      const div = document.createElement("div");
-      div.className = "task";
-      div.dataset.id = task.id;
+      const taskContainer = document.createElement("div");
+      taskContainer.className = "task";
+      taskContainer.dataset.id = task.id;
 
       // Paragraph element
-      const p = document.createElement("p");
-      p.textContent = task.title;
-      div.appendChild(p);
+      const title = createCustomElement({
+        tagName: "p",
+        classList: "task-title",
+        textContent: task.title,
+      });
+      taskContainer.append(title);
+
+      const toolbar = Toolbar(currentList, task);
+      taskContainer.append(toolbar.createToolbar(currentList, taskContainer));
 
       // Add onclick to change element to input on click
-      div.addEventListener("dblclick", (e) => {
+      taskContainer.addEventListener("dblclick", (e) => {
         editTask(e, task.id, currentList);
       });
 
-      div.addEventListener("click", (e) => {
+      taskContainer.addEventListener("click", (e) => {
         toggleDetails(e, task);
       });
 
-      return div;
+      return taskContainer;
     });
   };
 
@@ -50,7 +60,6 @@ const TaskRenderer = () => {
     // description &&
     expandedDiv.append(
       createCustomElement({
-        target: expandedDiv,
         tagName: "p",
         classList: "description",
         textContent: "description",
@@ -60,7 +69,6 @@ const TaskRenderer = () => {
     // dueDate &&
     expandedDiv.append(
       createCustomElement({
-        target: expandedDiv,
         tagName: "p",
         classList: "due-date",
         textContent: "dueDate",
@@ -70,7 +78,6 @@ const TaskRenderer = () => {
     // difficulty &&
     expandedDiv.append(
       createCustomElement({
-        target: expandedDiv,
         tagName: "p",
         classList: "difficulty",
         textContent: "difficulty",

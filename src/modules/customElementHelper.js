@@ -1,4 +1,5 @@
 const customElementHelper = () => {
+  // Pass in a object of { [target]., tagName, classList, textContent, attributes }
   function appendCustomElement(options) {
     const { target } = options;
     const targetElement = document.querySelector(target);

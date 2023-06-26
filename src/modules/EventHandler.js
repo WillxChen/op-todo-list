@@ -33,14 +33,29 @@ const EventHandler = () => {
     }
   };
 
+  // Refactor this mess later
+  function autoResize() {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+  }
+
   const editTask = (e, taskId, currentList) => {
     const el = e.target;
+    if (!el.classList.contains("task-title")) {
+      return;
+    }
     const previous = el.cloneNode(true);
-    const input = document.createElement("input");
-
+    const input = document.createElement("textarea");
     const currentTask = currentList.getTaskById(taskId);
+
+    input.classList.add("temp-input");
     input.value = currentTask.title;
+    // input.style.wrap = "soft";
+    input.style.wordBreak = "break-word";
+
     el.replaceWith(input);
+    input.style.height = "auto";
+    input.style.height = input.scrollHeight + "px";
 
     const save = () => {
       // Save the input value into the selected task
@@ -58,10 +73,19 @@ const EventHandler = () => {
     input.addEventListener("blur", save, {
       once: true,
     });
+
+    input.addEventListener("input", autoResize, false);
     input.focus();
   };
 
   const toggleDetails = (e, task) => {
+    if (
+      e.target.tagName === "IMG" ||
+      e.target.tagName === "P" ||
+      e.target.tagName === "TEXTAREA"
+    ) {
+      return;
+    }
     const taskContainer = e.target.closest(".task");
     const expandedDetails = taskContainer.querySelector(".expanded-details");
     taskContainer.classList.toggle("expanded");
