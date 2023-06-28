@@ -1,6 +1,41 @@
+import FormRenderer from "./FormRenderer";
+
 const ToolbarEventHandler = (currentList, task) => {
   const setEditMode = (e) => {
-    e.target.closest(".expanded-details");
+    const taskElement = e.target.closest(".task");
+    // Escape if already in edit mode
+    if (taskElement.classList.contains("isEditable")) return;
+    const mainDetails = taskElement.querySelector(".main-details");
+    taskElement.classList.add("isEditable");
+
+    // Clear all children in main details
+    mainDetails.replaceChildren();
+
+    if (taskElement.classList.contains("expanded")) {
+      taskElement.querySelector(".expanded-details").remove();
+      taskElement.classList.remove("expanded");
+    }
+
+    const formRenderer = FormRenderer(currentList, task.id);
+    const editForm = formRenderer.appendEditTaskForm(taskElement);
+    const textareas = editForm.getElementsByTagName("textarea");
+
+    [...textareas].forEach((textarea) => {
+      textarea.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          // Programatically trigger form submission
+          const submitEvent = new Event("submit", {
+            bubbles: true,
+            cancelable: true,
+          });
+          editForm.dispatchEvent(submitEvent);
+        }
+      });
+    });
+    // editForm
+    //   .getElementsByTagName("textarea")
+    //   .addEventListener("keydown", submitForm);
   };
 
   const setPriority = (e) => {

@@ -18,6 +18,7 @@ const TaskManager = (taskList) => {
   const updateTask = (taskId, updatedEntry) => {
     const taskIndex = getTaskByIndex(taskId);
     taskList[taskIndex] = { ...taskList[taskIndex], ...updatedEntry };
+    return taskList[taskIndex];
   };
 
   const removeTask = (taskId) => {

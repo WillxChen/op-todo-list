@@ -48,13 +48,13 @@ const ListRenderer = () => {
     appendCustomElement({
       target: `[data-id="${listId}"]`,
       tagName: "div",
-      classList: "task-container",
+      classList: "tasks-container",
     });
   };
 
   const appendTaskElements = (list, listId) => {
     const listElement = document.querySelector(`[data-id="${listId}"]`);
-    const taskContainer = listElement.querySelector(".task-container");
+    const taskContainer = listElement.querySelector(".tasks-container");
     const taskElements = createTaskElements(list.getTasks(), list);
     renderTaskElements(taskContainer, taskElements);
   };

@@ -1,4 +1,3 @@
-import List from "./List.js";
 import { renderListElements } from "./ListRenderer.js";
 import {
   createTaskElements,
@@ -27,7 +26,7 @@ const EventHandler = () => {
       const newTask = list.createTask(title);
       // Create and render task elements
       const taskElement = createTaskElements([newTask], list);
-      renderTaskElements(target.querySelector(".task-container"), taskElement);
+      renderTaskElements(target.querySelector(".tasks-container"), taskElement);
 
       e.target.value = "";
     }
@@ -78,7 +77,9 @@ const EventHandler = () => {
     input.focus();
   };
 
-  const toggleDetails = (e, task) => {
+  const toggleDetails = (e, currentList, taskId) => {
+    const task = currentList.getTaskById(taskId);
+
     if (
       e.target.tagName === "IMG" ||
       e.target.tagName === "P" ||
@@ -88,11 +89,16 @@ const EventHandler = () => {
     }
     const taskContainer = e.target.closest(".task");
     const expandedDetails = taskContainer.querySelector(".expanded-details");
-    taskContainer.classList.toggle("expanded");
+    if (taskContainer.classList.contains("isEditable")) {
+      return;
+    }
+
     if (!expandedDetails) {
       renderExpandedTask(taskContainer, task);
+      taskContainer.classList.add("expanded");
     } else {
       expandedDetails.remove();
+      taskContainer.classList.remove("expanded");
     }
   };
 

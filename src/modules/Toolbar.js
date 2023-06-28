@@ -12,6 +12,7 @@ const Toolbar = (currentList, task) => {
       name: "Edit",
       imgSrc: "../src/imgs/noun-quill-4626718.svg",
       className: "filter-gray",
+      onClick: (e) => eventHandler.setEditMode(e),
     },
     {
       name: "Set Priority",
@@ -45,7 +46,7 @@ const Toolbar = (currentList, task) => {
       // Delete
       const btn = createCustomElement({
         tagName: "button",
-        attribute: ["aria-label", `${name}`],
+        attributes: ["aria-label", `${name}`],
       });
       const img = createCustomElement({
         tagName: "img",
