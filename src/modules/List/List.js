@@ -1,4 +1,4 @@
-import TaskManager from "./TaskManager";
+import TaskManager from "./task/TaskManager";
 
 const List = (title, id = crypto.randomUUID().slice(0, 8)) => {
   const tasks = [];

@@ -1,10 +1,10 @@
 import Project from "./Project.js";
-import { checkForLists } from "./ListHandler.js";
-import { handleCreateListInput } from "./EventHandler.js";
+import { checkForLists } from "./List/ListHandler.js";
+import { createList } from "./EventHandler.js";
+import store from "./store.js";
 
-const currentProject = Project();
-sessionStorage.setItem("currentProject", JSON.stringify(currentProject));
-console.log(JSON.parse(sessionStorage.currentProject));
+store.addProject(Project("Default"));
+const currentProject = store.getProjects()[0];
 
 const UserInterface = (() => {
   const input = document.querySelector("#list-input");
@@ -13,7 +13,7 @@ const UserInterface = (() => {
     checkForLists(currentProject);
 
     input.addEventListener("keydown", (e) => {
-      handleCreateListInput(e, currentProject);
+      createList(e, currentProject);
     });
   };
 

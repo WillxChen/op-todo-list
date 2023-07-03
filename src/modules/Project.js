@@ -1,10 +1,10 @@
-import List from "./List";
+import List from "./List/List";
 
-const Project = (id = crypto.randomUUID().slice(0, 8)) => {
+const Project = (title, id = crypto.randomUUID().slice(0, 8)) => {
   const lists = [];
 
+  const getTitle = () => title;
   const getId = () => id;
-
   const getLists = () => lists;
 
   const createList = (title) => {
@@ -12,12 +12,13 @@ const Project = (id = crypto.randomUUID().slice(0, 8)) => {
     return lists[lists.length - 1];
   };
 
-  const findList = (listId) => {
-    const listIndex = lists.findIndex((list) => list.id === listId);
+  const getListById = (listId) => {
+    const listIndex = lists.findIndex((list) => list.getId() === listId);
+
     return lists[listIndex];
   };
 
-  return { getId, getLists, createList, findList };
+  return { getTitle, getId, getLists, createList, getListById };
 };
 
 export default Project;

@@ -1,4 +1,7 @@
-import { createMainDetailsElements } from "./TaskRenderer";
+import {
+  createMainDetailsElements,
+  createBottomPanelElements,
+} from "../List/task/taskRendering";
 
 const submitForm = (e, list, task) => {
   e.preventDefault();
@@ -6,6 +9,7 @@ const submitForm = (e, list, task) => {
   const form = e.target;
   const taskContainer = form.parentNode;
   const mainDetails = taskContainer.querySelector(".main-details");
+  const bottomPanel = taskContainer.querySelector(".bottom-panel");
 
   const data = new FormData(form);
   const obj = {};
@@ -17,19 +21,24 @@ const submitForm = (e, list, task) => {
   form.remove();
   const mainDetailsElements = createMainDetailsElements(updatedTask);
   mainDetails.append(mainDetailsElements);
+
+  bottomPanel.replaceChildren();
+  const bottomPanelElements = createBottomPanelElements(updatedTask);
+  bottomPanel.append(bottomPanelElements);
+
   taskContainer.classList.remove("isEditable");
 };
 
-const cancelForm = (e, list, taskId) => {
+const cancelForm = (e, task) => {
   e.preventDefault();
 
+  const form = e.target.closest("form");
+  const taskContainer = form.parentNode;
   const mainDetails = taskContainer.querySelector(".main-details");
 
-  const form = e.target.closest("form");
   form.remove();
   taskContainer.classList.remove("isEditable");
 
-  const task = list.updateTask(taskId, obj);
   const mainDetailsElements = createMainDetailsElements(task);
   mainDetails.append(mainDetailsElements);
 };

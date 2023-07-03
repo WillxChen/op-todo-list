@@ -1,4 +1,4 @@
-import { createCustomElement } from "./customElementHelper.js";
+import { createCustomElement } from "../Helpers/customElementHelper.js";
 import ToolbarEventHandler from "./ToolbarEventHandler.js";
 
 // Create toolbar will return a fragment container of three buttons

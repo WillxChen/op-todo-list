@@ -1,4 +1,4 @@
-import FormRenderer from "./FormRenderer";
+import FormRenderer from "../Form/FormRenderer";
 
 const ToolbarEventHandler = (currentList, task) => {
   const setEditMode = (e) => {

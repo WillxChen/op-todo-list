@@ -1,4 +1,4 @@
-import { createCustomElement } from "./customElementHelper.js";
+import { createCustomElement } from "../Helpers/customElementHelper.js";
 import { submitForm, cancelForm } from "./FormEventHandlers.js";
 
 const FormRenderer = (currentList, taskId) => {
@@ -64,7 +64,7 @@ const FormRenderer = (currentList, taskId) => {
     });
     difficulty.value = task.difficulty;
     difficulty.name = "difficulty";
-    const difficultyOptions = ["Easy", "Medium", "Hard"];
+    const difficultyOptions = ["", "Easy", "Medium", "Hard"];
 
     // Difficulty Options
     const optionElements = difficultyOptions.map((option) => {
@@ -77,7 +77,7 @@ const FormRenderer = (currentList, taskId) => {
     difficulty.append(...optionElements);
 
     // Form Buttons
-    const formButtons = __createFormButtons();
+    const formButtons = __createFormButtons(task);
     fragment.append(title, description, dueDate, difficulty, formButtons);
 
     return fragment;
@@ -99,7 +99,7 @@ const FormRenderer = (currentList, taskId) => {
       classList: "cancel-btn",
       textContent: "Cancel",
     });
-    cancelBtn.onclick = (e) => cancelForm(e, currentList, task.id);
+    cancelBtn.onclick = (e) => cancelForm(e, currentList.getTaskById(taskId));
 
     div.append(cancelBtn, submitBtn);
     return div;

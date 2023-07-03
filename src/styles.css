@@ -3,7 +3,7 @@
   box-sizing: border-box;
 }
 
-.list-container {
+.lists-container {
   display: flex;
   flex: 1;
   gap: 20px;
@@ -18,7 +18,7 @@ input {
 
 .list {
   width: 30vw;
-  height: 80vh;
+  auto;
   background-color: beige;
   padding: 15px;
 }
@@ -28,6 +28,7 @@ input {
   position: relative;
   padding: 20px;
   border: 1px solid black;
+  padding-bottom: 53px;
 }
 
 .task p {
@@ -126,4 +127,23 @@ button:hover {
   justify-content: flex-end;
   gap: 5px;
   width: 100%;
+}
+
+.bottom-panel {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bottom-panel p:first-child {
+  font-size: .85rem;
+  padding: 0px 20px;
+  color: red;
+}
+.bottom-panel p:last-child {
+  padding: 0px 20px;
 }
