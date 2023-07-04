@@ -112,6 +112,7 @@ pubSub.subscribe("projectCreated", storeProject);
 pubSub.subscribe("listCreated", storeList);
 pubSub.subscribe("taskCreated", storeTask);
 pubSub.subscribe("taskUpdated", storeUpdatedTask);
+pubSub.subscribe("taskDeleted", deleteStoredTask);
 pubSub.subscribe("currentProjectSet", storeCurrentProject);
 
 function storeProject(project) {
@@ -141,10 +142,7 @@ function storeList(list) {
 function storeTask(data) {
   const { list, task } = data;
   const updatedProjects = retrieveItem("projects");
-  const projIndex = retrieveCurrProjIdx();
-  const listIndex = retrieveListIndex(list.getId());
-  const storedProject = updatedProjects[projIndex];
-  const storedList = storedProject.lists[listIndex];
+  const storedList = retrieveStoredListByIdx(updatedProjects, list.getId());
   storedList.tasks.push(task);
 
   localStorage.setItem("projects", JSON.stringify(updatedProjects));
@@ -153,20 +151,36 @@ function storeTask(data) {
 function storeUpdatedTask(data) {
   const { list, task } = data;
   const updatedProjects = retrieveItem("projects");
-  const projIndex = retrieveCurrProjIdx();
-  const listIndex = retrieveListIndex(list.getId());
-  const storedProject = updatedProjects[projIndex];
-  const storedList = storedProject.lists[listIndex];
+  const storedList = retrieveStoredListByIdx(updatedProjects, list.getId());
   const storedTasks = storedList.tasks;
   const taskIndex = retrieveTaskIndex(storedTasks, task.id);
-  console.log("Storing task");
   storedTasks[taskIndex] = { ...storedTasks[taskIndex], ...task };
+
+  localStorage.setItem("projects", JSON.stringify(updatedProjects));
+}
+
+function deleteStoredTask(data) {
+  const { list, task } = data;
+  const updatedProjects = retrieveItem("projects");
+  const storedList = retrieveStoredListByIdx(updatedProjects, list.getId());
+  const storedTasks = storedList.tasks;
+  const taskIndex = retrieveTaskIndex(storedTasks, task.id);
+  storedTasks.splice(taskIndex, 1);
+
   localStorage.setItem("projects", JSON.stringify(updatedProjects));
 }
 
 function storeCurrentProject(data) {
   localStorage.setItem("currentProject", JSON.stringify(data));
 }
+
+const retrieveStoredListByIdx = (updatedProjects, listId) => {
+  const projIndex = retrieveCurrProjIdx();
+  const listIndex = retrieveListIndex(listId);
+  const storedProject = updatedProjects[projIndex];
+  const storedList = storedProject.lists[listIndex];
+  return storedList;
+};
 
 const retrieveCurrProjIdx = () => {
   const projectsInStorage = retrieveItem("projects");
@@ -191,7 +205,6 @@ const retrieveList = (id) => {
   const listIndex = retrieveListIndex(id);
   const project = updatedProjects[projIndex];
   const list = project.lists[listIndex];
-
   return list;
 };
 

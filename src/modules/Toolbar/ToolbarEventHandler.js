@@ -1,4 +1,5 @@
-import FormRenderer from "../Form/FormRenderer";
+import FormRenderer from "../Form/FormRenderer.js";
+import pubSub from "../pubSub.js";
 
 const ToolbarEventHandler = (currentList, task) => {
   const setEditMode = (e) => {
@@ -54,6 +55,7 @@ const ToolbarEventHandler = (currentList, task) => {
 
   const deleteTask = (e) => {
     currentList.removeTask(task.id);
+    pubSub.publish("taskDeleted", { list: currentList, task });
     e.target.closest(".task").remove();
   };
 
