@@ -2,6 +2,7 @@ import {
   createMainDetailsElements,
   createBottomPanelElements,
 } from "../List/task/TaskRenderer";
+import pubSub from "../pubSub";
 
 const submitForm = (e, list, task) => {
   e.preventDefault();
@@ -12,11 +13,12 @@ const submitForm = (e, list, task) => {
   const bottomPanel = taskContainer.querySelector(".bottom-panel");
 
   const data = new FormData(form);
-  const obj = {};
+  const newValues = {};
   for (const [name, value] of data) {
-    obj[name] = value;
+    newValues[name] = value;
   }
-  const updatedTask = list.updateTask(task.id, obj);
+  const updatedTask = list.updateTask(task.id, newValues);
+  pubSub.publish("taskUpdated", { list, task: updatedTask });
 
   form.remove();
   const mainDetailsElements = createMainDetailsElements(updatedTask);

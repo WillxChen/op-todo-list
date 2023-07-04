@@ -58,6 +58,7 @@ const getStoredProjects = () => {
 };
 
 const checkForProjects = () => {
+  // Uncomment to wipe storage
   // localStorage.removeItem("projects");
   if (!("projects" in localStorage)) {
     console.log("Initialize projects array in storage");
@@ -65,13 +66,13 @@ const checkForProjects = () => {
     createDefaultProject();
     return;
   }
-  // Need to recreate current project and set it in store
+  // Reconstruct the current project and set currentProject in storage
   store.setCurrentProject(reconstructCurrentProject());
 };
 
 const reconstructCurrentProject = () => {
   const storedProjects = getStoredProjects();
-  const currProjIndex = retrieveProjectIndex();
+  const currProjIndex = retrieveCurrProjIdx();
   const currentProj = storedProjects[currProjIndex];
 
   const reconstructedProject = Project(currentProj.title, currentProj.id);
@@ -110,13 +111,11 @@ const __reconstructTasks = (list, tasks) => {
 pubSub.subscribe("projectCreated", storeProject);
 pubSub.subscribe("listCreated", storeList);
 pubSub.subscribe("taskCreated", storeTask);
+pubSub.subscribe("taskUpdated", storeUpdatedTask);
 pubSub.subscribe("currentProjectSet", storeCurrentProject);
 
 function storeProject(project) {
-  // We need to somehow convert our complex data into a simple data structure
-  console.log("Storing Project");
   const updatedProjects = retrieveItem("projects");
-  console.log(updatedProjects);
   updatedProjects.push({
     title: project.getTitle(),
     id: project.getId(),
@@ -128,7 +127,7 @@ function storeProject(project) {
 
 function storeList(list) {
   const updatedProjects = retrieveItem("projects");
-  const index = retrieveProjectIndex();
+  const index = retrieveCurrProjIdx();
   console.log(updatedProjects[index]);
   updatedProjects[index].lists.push({
     title: list.getTitle(),
@@ -142,7 +141,7 @@ function storeList(list) {
 function storeTask(data) {
   const { list, task } = data;
   const updatedProjects = retrieveItem("projects");
-  const projIndex = retrieveProjectIndex();
+  const projIndex = retrieveCurrProjIdx();
   const listIndex = retrieveListIndex(list.getId());
   const storedProject = updatedProjects[projIndex];
   const storedList = storedProject.lists[listIndex];
@@ -151,15 +150,17 @@ function storeTask(data) {
   localStorage.setItem("projects", JSON.stringify(updatedProjects));
 }
 
-function storeUpdatedTask(listId, task) {
+function storeUpdatedTask(data) {
+  const { list, task } = data;
   const updatedProjects = retrieveItem("projects");
-  const projIndex = retrieveProjectIndex();
-  const listIndex = retrieveListIndex(listId);
-  const project = updatedProjects[projIndex];
-  const list = project.lists[listIndex];
-  const tasksArray = list.tasks;
-  const taskIndex = retrieveTaskIndex(list, task.id);
-  tasksArray[taskIndex] = { ...tasksArray[taskIndex], ...task };
+  const projIndex = retrieveCurrProjIdx();
+  const listIndex = retrieveListIndex(list.getId());
+  const storedProject = updatedProjects[projIndex];
+  const storedList = storedProject.lists[listIndex];
+  const storedTasks = storedList.tasks;
+  const taskIndex = retrieveTaskIndex(storedTasks, task.id);
+  console.log("Storing task");
+  storedTasks[taskIndex] = { ...storedTasks[taskIndex], ...task };
   localStorage.setItem("projects", JSON.stringify(updatedProjects));
 }
 
@@ -167,7 +168,7 @@ function storeCurrentProject(data) {
   localStorage.setItem("currentProject", JSON.stringify(data));
 }
 
-const retrieveProjectIndex = () => {
+const retrieveCurrProjIdx = () => {
   const projectsInStorage = retrieveItem("projects");
   const currentProject = retrieveItem("currentProject");
   const index = projectsInStorage.findIndex(
@@ -178,7 +179,7 @@ const retrieveProjectIndex = () => {
 
 const retrieveListIndex = (id) => {
   const projectsInStorage = retrieveItem("projects");
-  const currProjIndex = retrieveProjectIndex();
+  const currProjIndex = retrieveCurrProjIdx();
   const lists = projectsInStorage[currProjIndex].lists;
   const index = lists.findIndex((list) => list.id === id);
   return index;
@@ -186,7 +187,7 @@ const retrieveListIndex = (id) => {
 
 const retrieveList = (id) => {
   const updatedProjects = retrieveItem("projects");
-  const projIndex = retrieveProjectIndex();
+  const projIndex = retrieveCurrProjIdx();
   const listIndex = retrieveListIndex(id);
   const project = updatedProjects[projIndex];
   const list = project.lists[listIndex];

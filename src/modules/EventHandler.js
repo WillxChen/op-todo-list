@@ -70,6 +70,7 @@ const editTask = (e, taskId, currentList) => {
 };
 
 const toggleDetails = (e, currentList, taskId) => {
+  // Do not toggle if task is in Edit Mode or if the target is not the task
   if (
     e.target.classList.contains("isEditable") ||
     !e.target.classList.contains("task")
@@ -81,9 +82,6 @@ const toggleDetails = (e, currentList, taskId) => {
   const mainDetails = taskContainer.querySelector(".main-details");
 
   const expandedDetails = taskContainer.querySelector(".expanded-details");
-  if (taskContainer.classList.contains("isEditable")) {
-    return;
-  }
 
   if (!expandedDetails) {
     const task = currentList.getTaskById(taskId);
