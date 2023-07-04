@@ -7,9 +7,9 @@ const TaskManager = (taskList) => {
     return taskList.findIndex((task) => task.id === taskId);
   };
 
-  const createTask = (title) => {
+  const createTask = (title, taskId = crypto.randomUUID().slice(0, 8)) => {
     taskList.push({
-      id: crypto.randomUUID().slice(0, 8),
+      id: taskId,
       title,
     });
     return taskList[taskList.length - 1];

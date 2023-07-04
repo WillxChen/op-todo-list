@@ -1,7 +1,7 @@
 import {
   createMainDetailsElements,
   createBottomPanelElements,
-} from "../List/task/taskRendering";
+} from "../List/task/TaskRenderer";
 
 const submitForm = (e, list, task) => {
   e.preventDefault();

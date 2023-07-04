@@ -1,4 +1,7 @@
-import pubSub from "./pubsub";
+import Project from "./Project";
+import pubSub from "./pubSub.js";
+import store from "./store.js";
+import { createDefaultProject } from "./ProjectHandler";
 
 function storageAvailable() {
   try {
@@ -26,41 +29,23 @@ function storageAvailable() {
   }
 }
 
-// We want to store the Projects, the Lists, and the tasks
-// Just focus on projects
-// storedProjects object with an array of projects, currentPproject
-// every time we switch Projects we call upon the storage object
-
-const __parseJSON = (storedString) => {
-  const storedObj = JSON.parse(storedString);
-  return storedObj;
-};
-
 const __stringifyJSON = (obj) => {
   return JSON.stringify(obj);
 };
 
 const retrieveItem = (key) => {
   const storedString = localStorage.getItem(key);
-  return __parseJSON(storedString);
+  return JSON.parse(storedString);
 };
-
-const updateItem = (key, property, updatedValue) => {
-  const item = retrieveItem(key);
-  item[property] = updatedValue;
-};
-
-// store array of Projects
-// get id for each Project
 
 /*
   Data Structure
    localStorage = {
     projects: [
-      {title, id, lists: [
+      {projectTitle, id, lists: [
         { title, id, tasks: [] }
       ]}, 
-      {project, id}],
+      {projectTitle, id, lists...}],
     ]},
 */
 
@@ -72,41 +57,148 @@ const getStoredProjects = () => {
   return storedProjects;
 };
 
-const reconstructProjects = () => {
-  const storedProjects = getStoredProjects();
-  const reconstructedProjects = storedProjects.map((storedProject) => {
-    const reconstructedProject = Project(project.title, project.id);
-    reconstructLists(reconstructedProject, storedProject.lists);
-    return reconstructedProject;
-  });
-  return reconstructedProjects;
+const checkForProjects = () => {
+  // localStorage.removeItem("projects");
+  if (!("projects" in localStorage)) {
+    console.log("Initialize projects array in storage");
+    localStorage.setItem("projects", JSON.stringify([]));
+    createDefaultProject();
+    return;
+  }
+  // Need to recreate current project and set it in store
+  store.setCurrentProject(reconstructCurrentProject());
 };
 
-const reconstructLists = (project, lists) => {
+const reconstructCurrentProject = () => {
+  const storedProjects = getStoredProjects();
+  const currProjIndex = retrieveProjectIndex();
+  const currentProj = storedProjects[currProjIndex];
+
+  const reconstructedProject = Project(currentProj.title, currentProj.id);
+  pubSub.publish("projectReconstructed", reconstructedProject);
+
+  __reconstructLists(reconstructedProject, currentProj.lists);
+
+  return reconstructedProject;
+};
+// Initialize subscriptions after reconstruction
+
+const __reconstructLists = (project, lists) => {
   lists.map((list) => {
     const reconstructedList = project.createList(list.title, list.id);
-    pubSub.publish("createdList", reconstructedList);
+    pubSub.publish("listReconstructed", reconstructedList);
 
-    reconstructTasks(reconstructedList, list.tasks);
+    __reconstructTasks(reconstructedList, list.tasks);
   });
 };
 
-const reconstructTasks = (list, tasks) => {
+const __reconstructTasks = (list, tasks) => {
   tasks.forEach((task) => {
-    const reconstructedTask = list.createTask(task.title, task.id);
-    pubSub.publish("createdTask", { list, task: reconstructedTask });
-
-    reconstructedTask.updateTask(...task);
+    list.createTask(task.title, task.id);
+    const updatedTask = list.updateTask(task.id, task);
+    pubSub.publish("taskReconstructed", { list, task: updatedTask });
   });
 };
+
+// Init reconstruction
+// store.setProjects(reconstructProjects());
+
+// Listen for new creations to be put into storage
 
 //  Project Storage - Setter
 
+pubSub.subscribe("projectCreated", storeProject);
+pubSub.subscribe("listCreated", storeList);
+pubSub.subscribe("taskCreated", storeTask);
+pubSub.subscribe("currentProjectSet", storeCurrentProject);
+
+function storeProject(project) {
+  // We need to somehow convert our complex data into a simple data structure
+  console.log("Storing Project");
+  const updatedProjects = retrieveItem("projects");
+  console.log(updatedProjects);
+  updatedProjects.push({
+    title: project.getTitle(),
+    id: project.getId(),
+    lists: [],
+  });
+
+  localStorage.setItem("projects", JSON.stringify(updatedProjects));
+}
+
+function storeList(list) {
+  const updatedProjects = retrieveItem("projects");
+  const index = retrieveProjectIndex();
+  console.log(updatedProjects[index]);
+  updatedProjects[index].lists.push({
+    title: list.getTitle(),
+    id: list.getId(),
+    tasks: [],
+  });
+
+  localStorage.setItem("projects", JSON.stringify(updatedProjects));
+}
+
+function storeTask(data) {
+  const { list, task } = data;
+  const updatedProjects = retrieveItem("projects");
+  const projIndex = retrieveProjectIndex();
+  const listIndex = retrieveListIndex(list.getId());
+  const storedProject = updatedProjects[projIndex];
+  const storedList = storedProject.lists[listIndex];
+  storedList.tasks.push(task);
+
+  localStorage.setItem("projects", JSON.stringify(updatedProjects));
+}
+
+function storeUpdatedTask(listId, task) {
+  const updatedProjects = retrieveItem("projects");
+  const projIndex = retrieveProjectIndex();
+  const listIndex = retrieveListIndex(listId);
+  const project = updatedProjects[projIndex];
+  const list = project.lists[listIndex];
+  const tasksArray = list.tasks;
+  const taskIndex = retrieveTaskIndex(list, task.id);
+  tasksArray[taskIndex] = { ...tasksArray[taskIndex], ...task };
+  localStorage.setItem("projects", JSON.stringify(updatedProjects));
+}
+
+function storeCurrentProject(data) {
+  localStorage.setItem("currentProject", JSON.stringify(data));
+}
+
+const retrieveProjectIndex = () => {
+  const projectsInStorage = retrieveItem("projects");
+  const currentProject = retrieveItem("currentProject");
+  const index = projectsInStorage.findIndex(
+    (project) => project.id === currentProject.id
+  );
+  return index;
+};
+
+const retrieveListIndex = (id) => {
+  const projectsInStorage = retrieveItem("projects");
+  const currProjIndex = retrieveProjectIndex();
+  const lists = projectsInStorage[currProjIndex].lists;
+  const index = lists.findIndex((list) => list.id === id);
+  return index;
+};
+
+const retrieveList = (id) => {
+  const updatedProjects = retrieveItem("projects");
+  const projIndex = retrieveProjectIndex();
+  const listIndex = retrieveListIndex(id);
+  const project = updatedProjects[projIndex];
+  const list = project.lists[listIndex];
+
+  return list;
+};
+
+const retrieveTaskIndex = (array, taskId) => {
+  return array.findIndex((task) => task.id === taskId);
+};
+
 /*    
-  const storeProjects = () => {
-      We need to somehow convert our complex data into a simple data structure
-    localStorage.setItem("projects", )
-  }
 
 
   We need to now reconstruct the objects via their factory functions
@@ -138,3 +230,5 @@ const reconstructTasks = (list, tasks) => {
 
         
 */
+
+export { retrieveItem, checkForProjects, reconstructCurrentProject };

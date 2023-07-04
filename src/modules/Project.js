@@ -7,8 +7,8 @@ const Project = (title, id = crypto.randomUUID().slice(0, 8)) => {
   const getId = () => id;
   const getLists = () => lists;
 
-  const createList = (title) => {
-    lists.push(List(title));
+  const createList = (title, id) => {
+    lists.push(List(title, id));
     return lists[lists.length - 1];
   };
 

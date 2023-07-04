@@ -8,8 +8,8 @@ const List = (title, id = crypto.randomUUID().slice(0, 8)) => {
   const getId = () => id;
   const getTasks = () => tasks;
 
-  const createTask = (title) => {
-    return taskManager.createTask(title);
+  const createTask = (title, taskId) => {
+    return taskManager.createTask(title, taskId);
   };
 
   const getTaskById = (taskId) => {

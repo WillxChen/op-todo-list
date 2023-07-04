@@ -3,11 +3,13 @@ import {
   createCustomElement,
 } from "../Helpers/customElementHelper.js";
 import { createTask } from "../EventHandler.js";
-import pubSub from "../pubsub.js";
+import pubSub from "../pubSub.js";
 
 pubSub.subscribe("listCreated", renderList);
+pubSub.subscribe("listReconstructed", renderList);
 
 function renderList(list) {
+  console.log("Rendering List");
   // List Elements
   __appendListContainer(list);
   __appendListAndTitleElements(list);

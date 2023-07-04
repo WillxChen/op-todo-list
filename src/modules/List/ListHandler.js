@@ -1,5 +1,5 @@
 import renderList from "./ListRenderer.js";
-import pubSub from "../pubsub.js";
+import pubSub from "../pubSub.js";
 
 /*
   Flow:
@@ -10,24 +10,24 @@ import pubSub from "../pubsub.js";
 
 */
 
-const ListHandler = () => {
-  const createDefaultList = (currentProject) => {
-    const habitList = currentProject.createList("Habits");
-    const firstTask = habitList.createTask("Create your first habit!");
-    pubSub.publish("listCreated", habitList);
-    pubSub.publish("taskCreated", { list: habitList, task: firstTask });
-  };
-
-  const checkForLists = (currentProject) => {
-    const lists = currentProject.getLists();
-    if (lists.length) {
-      // This is rendering every task within the list right now even if there are none.
-      lists.forEach((list) => renderList(list));
-    } else {
-      createDefaultList(currentProject);
-    }
-  };
-  return { checkForLists };
+const createDefaultList = (defaultProject) => {
+  const habitList = defaultProject.createList("Habits");
+  const firstTask = habitList.createTask("Create your first habit!");
+  pubSub.publish("listCreated", habitList);
+  pubSub.publish("taskCreated", { list: habitList, task: firstTask });
 };
 
-export const { checkForLists } = ListHandler();
+// May be useless now
+
+// const checkForLists = (currentProject) => {
+//   console.log(currentProject);
+//   const lists = currentProject.getLists();
+//   if (lists.length) {
+//     // This is rendering every task within the list right now even if there are none.
+//     lists.forEach((list) => renderList(list));
+//   } else {
+//     createDefaultList(currentProject);
+//   }
+// };
+
+export { createDefaultList };

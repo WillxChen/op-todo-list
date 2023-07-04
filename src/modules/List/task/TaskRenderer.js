@@ -2,11 +2,13 @@ import { editTask, toggleDetails } from "../../EventHandler.js";
 import { createCustomElement } from "../../Helpers/customElementHelper.js";
 import formatDate from "../../Helpers/formatDateHelper.js";
 import Toolbar from "../../Toolbar/Toolbar.js";
-import pubSub from "../../pubsub.js";
+import pubSub from "../../pubSub.js";
 
 pubSub.subscribe("taskCreated", renderTask);
+pubSub.subscribe("taskReconstructed", renderTask);
 
 function renderTask(data) {
+  console.log("Rendering task");
   const { list, task } = data;
   __appendTaskElements(list, task);
 }

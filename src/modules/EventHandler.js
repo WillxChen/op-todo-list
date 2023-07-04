@@ -1,5 +1,5 @@
-import { renderExpandedTask } from "./List/task/taskRendering.js";
-import pubsub from "./pubsub.js";
+import { renderExpandedTask } from "./List/task/TaskRenderer.js";
+import pubsub from "./pubSub.js";
 
 const createList = (e, currentProject) => {
   if (e.key === "Enter") {

@@ -4,7 +4,7 @@ const pubSub = (() => {
   const getEvents = () => events;
 
   const subscribe = (event, callback) => {
-    console.log("subbing");
+    console.log(`Subscribing to ${event}`);
     let index;
 
     if (!events.hasOwnProperty(event)) {
@@ -21,7 +21,7 @@ const pubSub = (() => {
   };
 
   const publish = (event, data = {}) => {
-    console.log("pubbing");
+    console.log(`Executing ${event}`);
     if (!events.hasOwnProperty(event)) {
       return [];
     }
