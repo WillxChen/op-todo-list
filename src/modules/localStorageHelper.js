@@ -110,6 +110,7 @@ const __reconstructTasks = (list, tasks) => {
 
 pubSub.subscribe("projectCreated", storeProject);
 pubSub.subscribe("listCreated", storeList);
+pubSub.subscribe("listUpdated", storeUpdatedList);
 pubSub.subscribe("taskCreated", storeTask);
 pubSub.subscribe("taskUpdated", storeUpdatedTask);
 pubSub.subscribe("taskDeleted", deleteStoredTask);
@@ -129,12 +130,24 @@ function storeProject(project) {
 function storeList(list) {
   const updatedProjects = retrieveItem("projects");
   const index = retrieveCurrProjIdx();
-  console.log(updatedProjects[index]);
+
   updatedProjects[index].lists.push({
     title: list.getTitle(),
     id: list.getId(),
     tasks: [],
   });
+
+  localStorage.setItem("projects", JSON.stringify(updatedProjects));
+}
+
+function storeUpdatedList(data) {
+  const { list, title } = data;
+  const updatedProjects = retrieveItem("projects");
+  const index = retrieveCurrProjIdx();
+  const project = updatedProjects[index];
+  const listIndex = retrieveListIndex(list.getId());
+  // Update list entry
+  project.lists[listIndex] = { ...project.lists[listIndex], title };
 
   localStorage.setItem("projects", JSON.stringify(updatedProjects));
 }

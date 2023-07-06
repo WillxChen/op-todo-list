@@ -1,5 +1,6 @@
 import renderList from "./ListRenderer.js";
 import pubSub from "../pubSub.js";
+import { autoResize } from "../EventHandler.js";
 
 /*
   Flow:
@@ -17,6 +18,47 @@ const createDefaultList = (defaultProject) => {
   pubSub.publish("taskCreated", { list: habitList, task: firstTask });
 };
 
+const editTitle = (e, list) => {
+  const el = e.target;
+
+  const previous = el.cloneNode(true);
+  const input = document.createElement("textarea");
+
+  input.classList.add("temp-input");
+  input.value = list.getTitle();
+  // input.style.wrap = "soft";
+  input.style.wordBreak = "break-word";
+
+  el.replaceWith(input);
+  input.style.height = "auto";
+  input.style.height = input.scrollHeight + "px";
+
+  const save = () => {
+    // Save the input value into the selected List object
+    const title = list.setTitle(input.value);
+    pubSub.publish("listUpdated", { list, title });
+    previous.textContent = input.value;
+    input.replaceWith(previous);
+    // Recursively recall the event handler
+    previous.addEventListener("dblclick", (e) => {
+      editTitle(e, list);
+    });
+  };
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      input.blur();
+    }
+  });
+
+  input.addEventListener("blur", save, {
+    once: true,
+  });
+
+  input.addEventListener("input", autoResize, false);
+  input.focus();
+};
+
 // May be useless now
 
 // const checkForLists = (currentProject) => {
@@ -30,4 +72,4 @@ const createDefaultList = (defaultProject) => {
 //   }
 // };
 
-export { createDefaultList };
+export { createDefaultList, editTitle };

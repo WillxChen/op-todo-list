@@ -24,12 +24,12 @@ const createTask = (e, list) => {
   }
 };
 
-// Refactor this mess later
 function autoResize() {
   this.style.height = "auto";
   this.style.height = this.scrollHeight + "px";
 }
 
+// Refactor this mess later
 const editTask = (e, taskId, currentList) => {
   const el = e.target;
   if (!el.classList.contains("task-title")) {

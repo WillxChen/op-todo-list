@@ -3,6 +3,7 @@ import {
   createCustomElement,
 } from "../Helpers/customElementHelper.js";
 import { createTask } from "../EventHandler.js";
+import { editTitle } from "../List/ListHandler.js";
 import pubSub from "../pubSub.js";
 
 pubSub.subscribe("listCreated", renderList);
@@ -12,7 +13,7 @@ function renderList(list) {
   console.log("Rendering List");
   // List Elements
   __appendListContainer(list);
-  __appendListAndTitleElements(list);
+  __appendTitleElement(list);
 
   // Task Element
   __appendTaskContainer(list);
@@ -27,14 +28,17 @@ const __appendListContainer = (list) => {
   });
 };
 
-const __appendListAndTitleElements = (list) => {
+const __appendTitleElement = (list) => {
   const listElement = document.querySelector(`[data-id="${list.getId()}"]`);
-  appendCustomElement({
-    target: `[data-id="${list.getId()}"]`,
+  const title = createCustomElement({
     tagName: "h2",
+    classList: "list-title",
     textContent: list.getTitle(),
   });
-  listElement.appendChild(__createTaskForm(list));
+  title.addEventListener("dblclick", (e) => {
+    editTitle(e, list);
+  });
+  listElement.append(title, __createTaskForm(list));
 };
 
 const __createTaskForm = (list) => {

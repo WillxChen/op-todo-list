@@ -47,32 +47,42 @@ const FormRenderer = (currentList, taskId) => {
       classList: "edit-date",
     });
     const date = new Date();
-    task.dueDate
-      ? (dueDate.value = task.dueDate)
-      : (dueDate.valueAsDate = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-          12
-        ));
+    task.dueDate ? (dueDate.value = task.dueDate) : (dueDate.value = "");
     dueDate.name = "dueDate";
+    dueDate.onclick = () => {
+      dueDate.valueAsDate = dueDate.valueAsDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        12
+      );
+    };
 
     // Difficulty
     const difficulty = createCustomElement({
       tagName: "select",
       classList: "edit-difficulty",
     });
-    difficulty.value = task.difficulty;
     difficulty.name = "difficulty";
-    const difficultyOptions = ["", "Easy", "Medium", "Hard"];
+    const difficultyOptions = [
+      { name: "Select a Difficulty", value: "" },
+      { name: "Easy", value: "Easy" },
+      { name: "Medium", value: "Medium" },
+      { name: "Hard", value: "Hard" },
+    ];
 
     // Difficulty Options
     const optionElements = difficultyOptions.map((option) => {
-      return createCustomElement({
+      const { name, value } = option;
+      const optionElement = createCustomElement({
         tagName: "option",
-        textContent: option,
-        attributes: ["value", `${option}`],
+        textContent: name,
+        attributes: ["value", `${value}`],
       });
+      if (task.difficulty === value) {
+        optionElement.selected = true;
+      }
+      return optionElement;
     });
     difficulty.append(...optionElements);
 

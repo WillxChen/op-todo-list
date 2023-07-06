@@ -1,10 +1,12 @@
 import TaskManager from "./task/TaskManager";
 
 const List = (title, id = crypto.randomUUID().slice(0, 8)) => {
+  let listTitle = title;
   const tasks = [];
   const taskManager = TaskManager(tasks);
 
-  const getTitle = () => title;
+  const getTitle = () => listTitle;
+  const setTitle = (newTitle) => (listTitle = newTitle);
   const getId = () => id;
   const getTasks = () => tasks;
 
@@ -26,6 +28,7 @@ const List = (title, id = crypto.randomUUID().slice(0, 8)) => {
 
   return {
     getTitle,
+    setTitle,
     getId,
     getTasks,
     createTask,

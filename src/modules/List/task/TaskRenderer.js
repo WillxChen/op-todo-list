@@ -120,7 +120,6 @@ const __createExpandedTask = (task) => {
       textContent: formatDate(dueDate),
     })
   );
-  console.log(dueDate);
 
   // difficulty &&
   expandedDiv.append(
