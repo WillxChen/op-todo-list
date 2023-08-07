@@ -45,18 +45,26 @@ const editTitle = (e, list) => {
     });
   };
 
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      input.blur();
-    }
-  });
+  input.addEventListener("input", autoResize, false);
+  input.focus();
 
   input.addEventListener("blur", save, {
     once: true,
   });
 
-  input.addEventListener("input", autoResize, false);
-  input.focus();
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      input.blur();
+    }
+    if (e.key === "Escape") {
+      input.removeEventListener("blur", save);
+      input.replaceWith(previous);
+
+      previous.addEventListener("dblclick", (e) => {
+        editTitle(e, list);
+      });
+    }
+  });
 };
 
 // May be useless now

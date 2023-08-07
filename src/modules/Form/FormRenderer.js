@@ -1,5 +1,6 @@
 import { createCustomElement } from "../Helpers/customElementHelper.js";
 import { submitForm, cancelForm } from "./FormEventHandlers.js";
+import autoResize from "../EventHandler.js";
 
 const FormRenderer = (currentList, taskId) => {
   const appendEditTaskForm = (target) => {
@@ -17,6 +18,11 @@ const FormRenderer = (currentList, taskId) => {
     form.addEventListener("submit", (e) => {
       submitForm(e, currentList, task);
     });
+    form.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        cancelForm(e, currentList.getTaskById(taskId));
+      }
+    });
     return form;
   };
 
@@ -30,6 +36,8 @@ const FormRenderer = (currentList, taskId) => {
     });
     title.value = task.title;
     title.name = "title";
+    title.style.wordBreak = "break-word";
+    title.addEventListener("input", autoResize, false);
 
     //Description
     const description = createCustomElement({

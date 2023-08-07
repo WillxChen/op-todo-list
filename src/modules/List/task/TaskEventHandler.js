@@ -1,6 +1,10 @@
-const performHabit = () => {
-  if (habit.type === "positive") {
-    /* check if habit is daily streak
+const performHabit = (task) => {
+  if (task.type === "positive") {
+    task.
+  } else {
+    
+  }
+  /* check if habit is daily streak
         -check date
         -check last accomplished
       if daily streak then
@@ -11,7 +15,6 @@ const performHabit = () => {
         tally
         create new streak
     */
-  }
 };
 
 const completeTask = () => {

@@ -33,13 +33,8 @@ const __stringifyJSON = (obj) => {
   return JSON.stringify(obj);
 };
 
-const retrieveItem = (key) => {
-  const storedString = localStorage.getItem(key);
-  return JSON.parse(storedString);
-};
-
-/*
-  Data Structure
+/**
+  Data Schema
    localStorage = {
     projects: [
       {projectTitle, id, lists: [
@@ -48,6 +43,11 @@ const retrieveItem = (key) => {
       {projectTitle, id, lists...}],
     ]},
 */
+const retrieveItem = (key) => {
+  const storedString = localStorage.getItem(key);
+  return JSON.parse(storedString);
+};
+
 
 //  Project retrieval - Getters
 
@@ -63,6 +63,8 @@ const checkForProjects = () => {
   if (!("projects" in localStorage)) {
     console.log("Initialize projects array in storage");
     localStorage.setItem("projects", JSON.stringify([]));
+  }
+  if (!retrieveItem("projects").length) {
     createDefaultProject();
     return;
   }
@@ -111,6 +113,7 @@ const __reconstructTasks = (list, tasks) => {
 pubSub.subscribe("projectCreated", storeProject);
 pubSub.subscribe("listCreated", storeList);
 pubSub.subscribe("listUpdated", storeUpdatedList);
+pubSub.subscribe("listDeleted", deleteStoredList);
 pubSub.subscribe("taskCreated", storeTask);
 pubSub.subscribe("taskUpdated", storeUpdatedTask);
 pubSub.subscribe("taskDeleted", deleteStoredTask);
@@ -148,6 +151,14 @@ function storeUpdatedList(data) {
   const listIndex = retrieveListIndex(list.getId());
   // Update list entry
   project.lists[listIndex] = { ...project.lists[listIndex], title };
+
+  localStorage.setItem("projects", JSON.stringify(updatedProjects));
+}
+
+function deleteStoredList(list) {
+  const { updatedProjects, storedList } = retrieveList(list.getId());
+  const index = retrieveListIndex(list.getId());
+  storedList.splice(index, 1);
 
   localStorage.setItem("projects", JSON.stringify(updatedProjects));
 }
@@ -215,10 +226,9 @@ const retrieveListIndex = (id) => {
 const retrieveList = (id) => {
   const updatedProjects = retrieveItem("projects");
   const projIndex = retrieveCurrProjIdx();
-  const listIndex = retrieveListIndex(id);
   const project = updatedProjects[projIndex];
-  const list = project.lists[listIndex];
-  return list;
+  const storedList = project.lists;
+  return { updatedProjects, storedList };
 };
 
 const retrieveTaskIndex = (array, taskId) => {

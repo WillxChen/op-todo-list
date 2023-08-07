@@ -12,13 +12,20 @@ const Project = (title, id = crypto.randomUUID().slice(0, 8)) => {
     return lists[lists.length - 1];
   };
 
-  const getListById = (listId) => {
-    const listIndex = lists.findIndex((list) => list.getId() === listId);
-
-    return lists[listIndex];
+  const removeList = (listId) => {
+    const index = __getListIndex(listId);
+    const entry = lists[index];
+    lists.splice(index, 1);
+    return entry;
   };
 
-  return { getTitle, getId, getLists, createList, getListById };
+  const __getListIndex = (listId) => {
+    const listIndex = lists.findIndex((list) => list.getId() === listId);
+
+    return listIndex;
+  };
+
+  return { getTitle, getId, getLists, createList, removeList };
 };
 
 export default Project;

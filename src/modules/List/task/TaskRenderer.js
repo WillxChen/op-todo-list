@@ -2,6 +2,7 @@ import { editTask, toggleDetails } from "../../EventHandler.js";
 import { createCustomElement } from "../../Helpers/customElementHelper.js";
 import formatDate from "../../Helpers/formatDateHelper.js";
 import Toolbar from "../../Toolbar/Toolbar.js";
+import taskConfig from "../../Toolbar/taskConfig.js";
 import pubSub from "../../pubSub.js";
 
 pubSub.subscribe("taskCreated", renderTask);
@@ -28,12 +29,10 @@ const __createTaskElements = (currentList, task) => {
   taskContainer.dataset.id = task.id;
 
   // Toolbar
-  const toolbarCreator = Toolbar(currentList, task);
+  const toolbarCreator = Toolbar(taskConfig(currentList, task));
   const toolbar = toolbarCreator.createToolbar(currentList, taskContainer);
-
   // Main details
   const mainDetails = __renderMainDetails(task);
-
   // Bottom Panel
   const bottomPanel = __renderBottomPanel(currentList, task.id);
 
@@ -50,7 +49,8 @@ const __createTaskElements = (currentList, task) => {
     toggleDetails(e, currentList, task.id);
   });
 
-  taskContainer.addEventListener("mouseover", () => {
+  taskContainer.addEventListener("mouseover", (e) => {
+    e.stopPropagation();
     toolbar.style.opacity = "1";
     toolbar.style.visibility = "visible";
   });

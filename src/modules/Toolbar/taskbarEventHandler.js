@@ -1,7 +1,7 @@
 import FormRenderer from "../Form/FormRenderer.js";
 import pubSub from "../pubSub.js";
 
-const ToolbarEventHandler = (currentList, task) => {
+const taskbarEventHandler = (currentList, task) => {
   const setEditMode = (e) => {
     const taskElement = e.target.closest(".task");
     // Escape if already in edit mode
@@ -62,4 +62,4 @@ const ToolbarEventHandler = (currentList, task) => {
   return { setEditMode, setPriority, deleteTask };
 };
 
-export default ToolbarEventHandler;
+export default taskbarEventHandler;

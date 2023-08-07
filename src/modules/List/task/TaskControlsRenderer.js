@@ -1,10 +1,7 @@
 import { createCustomElement } from "../../Helpers/customElementHelper";
 
-const 
-
 const createSidePanel = (listType) => {
   const sidePanel = createCustomElement({
-  // tagName, classList, textContent, attributes
   tagName: "div",
   classList: "side-panel",
 });
@@ -13,9 +10,10 @@ const createSidePanel = (listType) => {
       return sidePanel.appendChild(createHabitButton());
     case "Daily":
       return sidePanel.appendChild(createDailyBox());
-    case "ToDo":
+    case "To-Do":
       return sidePanel.appendChild(createToDoBox());
   }
+  return sidePanel;
 }
 
 const createHabitButton = () => {

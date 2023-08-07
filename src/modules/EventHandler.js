@@ -93,4 +93,4 @@ const toggleDetails = (e, currentList, taskId) => {
   }
 };
 
-export { createList, createTask, editTask, toggleDetails };
+export { createList, createTask, editTask, toggleDetails, autoResize };

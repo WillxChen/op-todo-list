@@ -5,6 +5,8 @@ import {
 import { createTask } from "../EventHandler.js";
 import { editTitle } from "../List/ListHandler.js";
 import pubSub from "../pubSub.js";
+import Toolbar from "../Toolbar/Toolbar.js";
+import listConfig from "../Toolbar/listConfig.js";
 
 pubSub.subscribe("listCreated", renderList);
 pubSub.subscribe("listReconstructed", renderList);
@@ -13,6 +15,9 @@ function renderList(list) {
   console.log("Rendering List");
   // List Elements
   __appendListContainer(list);
+  // Toolbar
+  __appendToolbar(list);
+
   __appendTitleElement(list);
 
   // Task Element
@@ -64,6 +69,24 @@ const __appendTaskContainer = (list) => {
     target: `[data-id="${list.getId()}"]`,
     tagName: "div",
     classList: "tasks-container",
+  });
+};
+
+const __appendToolbar = (list) => {
+  const listElement = document.querySelector(`[data-id="${list.getId()}"]`);
+  const toolbarCreator = Toolbar(listConfig(list));
+  const toolbar = toolbarCreator.createToolbar();
+
+  listElement.append(toolbar);
+
+  listElement.addEventListener("mouseover", () => {
+    toolbar.style.opacity = "1";
+    toolbar.style.visibility = "visible";
+  });
+
+  listElement.addEventListener("mouseout", () => {
+    toolbar.style.opacity = "0";
+    toolbar.style.visibility = "hidden";
   });
 };
 
